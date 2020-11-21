@@ -1,0 +1,77 @@
+CASES AND EXPECTED OUTPUTS:
+Format: Case --> Expected
+-------------------------------------
+-------------------------------------
+
+----------------------------------
+Local Functions:
+----------------------------------
+Configure:
+	Any arguments missing --> Program will stop with arguments missing message
+	Negative-value arguments --> Error: can't have negatives
+	Port is not a number --> Error
+	IP Address Incorrect format --> Error
+	Proper format for IP and  0 < port < 65536 --> .configure file will be created in same directory as ./WTF
+
+Add:
+	Any arguments missing --> Program will stop with arguments missing message
+	Project name dne on client --> Error
+	Project exists but filename doesn't --> File doesn't exist error
+	Both project and file exists --> entry added to .Manifest. Old versions are replaced.
+
+Remove: 
+	Any arguments missing --> Program will stop with arguments missing message
+	Project name dne on client --> Error
+	Project exists but filename doesn't --> Nothing changes
+	Both project and file exists --> Remove existing entry (should only be one, but all will be removed).
+	No entry for existing file --> Nothing changes
+
+----------------------------------
+Non-Local Functions:
+----------------------------------
+NO CONFIGURE: --> If .configure doesn't exist, any function that makes contact with server will fail and exit. 
+INVALID IP or PORT --> Client will report error and exit. 
+
+Create:
+	Any arguments missing --> Program will stop with arguments missing message
+	Project name already exists on the server --> No project created, client notified.
+	Client does't get a response from server --> Client will wait for some time, then stop waiting
+	Project doesn't exist on server --> Directory created on server & client, with .Manifest (version:0)
+
+Checkout:
+	Any arguments missing --> Program will stop with arguments missing message
+	Project does not exist on server --> Server will report it to client and process will end.
+	Client already has project directory --> Client will report it and stop
+	Project exists on server, not on client --> Server will send directory and all its contents
+
+Update:
+	Any arguments missing --> Program will stop with arguments missing message
+	Project does not exist on server --> Server will report it to client and process will end.
+	Manifest versions match --> Empty .Update is created on client
+	Client and server have different Manifest versions:
+		File's server/client version and stored hash are different, live hash matches client --> Add 'modify' line to .Update
+		Server has file entries that client does not --> Write 'add' line to .Update
+		Client has file entires the server doesn't --> Add 'delete' line to .Update
+		Client hash is different from both Live hash and server's stored hash --> Add 'conflict' line to .Conflict, ask user to fix this
+
+Upgrade: 
+	Any arguments missing --> Program will stop with arguments missing message
+	Project does not exist on server --> Server will report it to client and process will end.
+	
+Commit:
+	Any arguments missing --> Program will stop with arguments missing message
+	Project does not exist on server --> Server will report it to client and process will end.
+	Client can't get servers .Manifest --> Error
+
+Push: Not working properly
+
+Current version: NOT IMPLEMENTED
+	
+Destroy: NOT IMPLEMENTED
+
+History: NOT IMPLEMENTED
+
+Rollback: NOT IMPLEMENTED
+
+
+

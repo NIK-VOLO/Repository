@@ -1,0 +1,41 @@
+Thread use: 
+    Every client connection to the server is opened in a new thread by a client handler.
+    This is where the server will receive the commands from the individual client. 
+    As of this point, the mutex is locked per client, meaning every client must wait until the
+    previous client has finished. This is not ideal, but it is what it is. 
+
+    The server keeps track of connections using a linked list of socket descriptors. When the 
+    program exits, a cleanup function closes all connections in this LL.
+
+Server:
+    The server should remain running and listening for client connections until it receives a SIGINT signal.
+
+    Ran into issues with files not being deleted completely on the server side while running the push command. 
+    In the end, this causes the push command to not function properly. The cause of this problem is something
+    to do with file descriptors remaining open after the file is deleted, and since the server continues to run 
+    these files aren't completely deleted, which is necessary for my push implementation to work. 
+
+    The server will wait for the client to send a message stating it's task completion before closing the socket
+    and unlocking the mutex.
+
+Client:
+    The client is a single thread that sends a command to the server which the user inputed into the command line.
+    Through a series of send() and recv() the desired action is acheived. 
+
+    The commands that do not require a connection be made will not do so. The server connection is skipped and the action
+    is performed locally.
+
+File Transfers:
+    The client or server will first send the recipient the number of bytes in the file, and then the contents of the 
+    file as a string. The recipient will create its own string based on the file size it received, then write it to 
+    a file. 
+
+Hash:
+    SHA256 is used to create the hash of functions.
+
+.Manifest (etc.) file format:
+    The first line is the version number.
+    Every following line is in the form
+        <version>:<File Path>:<hash>
+    .Update and .Commit have an extra tag at the beginning of the line to signify the action that needs to be taken, 
+    as per the assignment instructions. 
